@@ -11,10 +11,10 @@ interface Props {
 
 export default function AppLayout({ user, onLogout, children }: Props) {
   return (
-    <div className="flex h-screen flex-col">
-      <TopNav user={user} onLogout={onLogout} />
-      <div className="flex flex-col md:flex-row h-screen">
-        <Sidebar />
+    <div className="flex flex-col md:flex-row h-screen">
+      <Sidebar />
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <TopNav user={user} onLogout={onLogout} />
         <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
           {children}
         </main>
