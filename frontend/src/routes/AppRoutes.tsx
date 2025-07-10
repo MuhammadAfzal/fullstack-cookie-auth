@@ -18,7 +18,7 @@ export default function AppRoutes({ user, onLogin, onLogout }: Props) {
         path="/dashboard"
         element={
           <ProtectedRoute user={user}>
-            <DashboardPage user={user} onLogout={onLogout} />
+            <DashboardPage user={user as User} onLogout={onLogout} />
           </ProtectedRoute>
         }
       />
