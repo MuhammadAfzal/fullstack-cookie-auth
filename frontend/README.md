@@ -1,12 +1,50 @@
-# React + Vite
+# 🔐 Fullstack Cookie-Based Auth App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fullstack authentication template built with **React**, **Express**, and **Tailwind CSS**, using **HTTP-only cookies** for secure session handling.
 
-Currently, two official plugins are available:
+This project demonstrates a clean, scalable login flow with a modern UI and proper backend session management — ideal for learning or reusing in real projects.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🧰 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Frontend**
+- React (Vite)
+- Tailwind CSS
+- Component-based architecture
+
+**Backend**
+- Node.js / Express
+- Cookie-based authentication (HTTP-only)
+- CORS and secure headers
+
+**Dev Tools**
+- Vite
+- GitHub CLI
+- Postman / Thunder Client for API testing
+
+---
+
+## ✨ Features
+
+- 🔐 Secure login with HTTP-only cookies
+- 🎨 Responsive and beautiful UI with Tailwind CSS
+- 💡 Scalable frontend structure (components, services, utils)
+- ⚙️ Full-stack integration with clean separation of concerns
+- 🛡️ Basic CSRF protection pattern-ready
+- 📦 Ready for deployment on Vercel + Railway (or your own stack)
+
+---
+
+## 📦 Folder Structure
+
+```bash
+fullstack-cookie-auth/
+├── backend/           # Express server (auth, session)
+├── client/            # React frontend (Vite + Tailwind)
+│   ├── components/    # Reusable UI components
+│   ├── services/      # API interaction
+│   ├── utils/         # Constants, helpers
+│   └── App.jsx
+└── README.md
+
