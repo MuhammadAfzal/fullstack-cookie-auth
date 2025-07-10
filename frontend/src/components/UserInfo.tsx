@@ -1,6 +1,12 @@
 import { logout } from "../services/api";
+import { User } from "../types";
 
-export default function UserInfo({ user, onLogout }) {
+interface Props {
+  user: User;
+  onLogout: () => void;
+}
+
+export default function UserInfo({ user, onLogout }: Props) {
   const handleLogout = async () => {
     await logout();
     onLogout();

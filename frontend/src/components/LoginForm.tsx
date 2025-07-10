@@ -1,18 +1,30 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { login } from "../services/api";
 
-export default function LoginForm({ onLogin }) {
-  const [form, setForm] = useState({ username: "", password: "" });
-  const [error, setError] = useState("");
+interface Props {
+  onLogin: () => Promise<void>;
+}
 
-  const handleChange = (e) => {
+interface FormData {
+  username: string;
+  password: string;
+}
+
+export default function LoginForm({ onLogin }: Props) {
+  const [form, setForm] = useState<FormData>({ username: "", password: "" });
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
     try {
       await login(form);
-      onLogin();
+      await onLogin();
+      navigate("/dashboard");
     } catch {
       setError("Invalid username or password");
     }
