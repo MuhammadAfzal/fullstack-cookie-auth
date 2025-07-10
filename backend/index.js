@@ -5,14 +5,11 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = 5000;
 
-// Fake login credentials
 const USER = { username: "test", password: "1234" };
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-
-// CORS: allow frontend (on port 5173) to send credentials
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -20,15 +17,13 @@ app.use(
   })
 );
 
-// Login route
-app.post("/login", (req, res) => {
+// Login
+app.post("/api/auth/login", (req, res) => {
   const { username, password } = req.body;
-
   if (username === USER.username && password === USER.password) {
-    // Set secure cookie
     res.cookie("token", "secure-session-token", {
       httpOnly: true,
-      secure: false, // Set to true if using HTTPS
+      secure: false,
       sameSite: "lax",
     });
     res.json({ success: true });
@@ -37,18 +32,18 @@ app.post("/login", (req, res) => {
   }
 });
 
-// Protected route
-app.get("/me", (req, res) => {
+// Auth check
+app.get("/api/auth/me", (req, res) => {
   const token = req.cookies.token;
   if (token === "secure-session-token") {
-    res.json({ username: USER.username });
+    res.json({ user: { username: USER.username } });
   } else {
     res.status(401).json({ error: "Not authenticated" });
   }
 });
 
 // Logout
-app.post("/logout", (req, res) => {
+app.post("/api/auth/logout", (req, res) => {
   res.clearCookie("token");
   res.json({ success: true });
 });
