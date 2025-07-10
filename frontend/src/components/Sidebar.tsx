@@ -19,7 +19,7 @@ export default function Sidebar() {
     <>
       {/* Mobile hamburger */}
       <button
-        className="md:hidden p-4 text-gray-700 focus:outline-none"
+        className="md:hidden p-4 text-gray-700 dark:text-gray-200 focus:outline-none"
         onClick={toggleMobile}
       >
         <FiMenu size={24} />
@@ -29,16 +29,19 @@ export default function Sidebar() {
       <div
         className={`
           ${mobileOpen ? "block" : "hidden"} md:flex
-          flex-col bg-gray-100 transition-all duration-300 ease-in-out
+          flex-col transition-all duration-300 ease-in-out
           ${collapsed ? "w-16" : "w-64"}
-          shadow-md h-screen
+          h-screen
+          bg-gray-100 dark:bg-gray-900
+          text-gray-800 dark:text-gray-100
+          shadow-md
         `}
       >
         {/* Collapse toggle (desktop only) */}
         <div className="hidden md:flex justify-end p-2">
           <button
             onClick={toggleCollapse}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
             <FiMenu />
           </button>
@@ -49,11 +52,11 @@ export default function Sidebar() {
             <NavLink
               key={to}
               to={to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-md text-sm ${
+              className={({ isActive }: { isActive: boolean }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
                   isActive
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-gray-700 hover:bg-gray-200"
+                    ? "bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-100"
+                    : "text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
                 }`
               }
             >

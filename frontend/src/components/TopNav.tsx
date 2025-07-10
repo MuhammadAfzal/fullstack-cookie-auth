@@ -1,4 +1,6 @@
 import { User } from "../types";
+import ThemeToggle from "./ThemeToggle";
+import UserMenu from "./UserMenu";
 
 interface Props {
   user: User;
@@ -7,16 +9,13 @@ interface Props {
 
 export default function TopNav({ user, onLogout }: Props) {
   return (
-    <div className="flex justify-between items-center px-6 py-4 bg-white shadow-md border-b">
-      <span className="text-lg font-semibold">My Dashboard</span>
+    <div className="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-800 shadow-md border-b dark:border-gray-700">
+      <span className="text-lg font-semibold text-gray-900 dark:text-white">
+        My Dashboard
+      </span>
       <div className="flex items-center gap-4">
-        <span className="text-gray-700">{user.username}</span>
-        <button
-          onClick={onLogout}
-          className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          Logout
-        </button>
+        <ThemeToggle />
+        <UserMenu user={user} onLogout={onLogout} />
       </div>
     </div>
   );
