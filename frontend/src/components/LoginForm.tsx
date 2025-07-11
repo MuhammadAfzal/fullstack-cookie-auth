@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { showToast } from "../utils/toast";
 import { login } from "../services/api";
 import { User } from "../types";
 import FullScreenLoader from "./FullScreenLoader";
@@ -37,11 +37,11 @@ export default function LoginForm({ onLogin }: Props) {
       const userData: User = { username: form.username }; // Adjust this to match the User type definition
       await onLogin(userData);
       setSuccess(true);
-      toast.success("✅ Login successful!");
+      showToast("✅ Login successful!", "success");
       setTransitioning(true); // show spinner
       setTimeout(() => navigate("/dashboard"), 500); // smooth delay
     } catch {
-      toast.error("❌ Invalid username or password");
+      showToast("❌ Invalid credentials", "error");
       setError("Invalid username or password");
     } finally {
       setLoading(false);

@@ -11,7 +11,18 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <AuthProvider>
       <ThemeProvider>
         <App />
-        <Toaster richColors position="top-center" />
+        <Toaster
+          position="top-right"
+          richColors
+          closeButton
+          theme="system" // 'light' | 'dark' | 'system'
+          toastOptions={{
+            classNames: {
+              toast: "rounded-md shadow-md text-sm",
+              title: "font-medium",
+            },
+          }}
+        />
       </ThemeProvider>
     </AuthProvider>
   </React.StrictMode>
