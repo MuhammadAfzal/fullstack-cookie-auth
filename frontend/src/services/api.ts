@@ -1,6 +1,12 @@
 import { User } from "../types";
 
-const BASE_URL = "http://localhost:5000/api/auth";
+interface ImportMetaWithEnv extends ImportMeta {
+  env: {
+    VITE_API_URL: string;
+  };
+}
+
+const BASE_URL = (import.meta as ImportMetaWithEnv).env.VITE_API_URL;
 
 export async function login(data: {
   username: string;
