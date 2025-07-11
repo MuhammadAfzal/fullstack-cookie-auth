@@ -34,7 +34,7 @@ app.post("/api/auth/login", (req, res) => {
   if (username === USER.username && password === USER.password) {
     res.cookie("token", "secure-session-token", {
       httpOnly: true,
-      secure: false,
+      secure: true,
       sameSite: "lax",
     });
     res.json({ success: true });
