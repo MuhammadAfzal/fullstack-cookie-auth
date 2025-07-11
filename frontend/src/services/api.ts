@@ -6,15 +6,24 @@ export async function login(data: {
   username: string;
   password: string;
 }): Promise<User> {
-  const res = await fetch(`${BASE_URL}/login`, {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
+  try {
+    const res = await fetch(`${BASE_URL}/login`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
 
-  if (!res.ok) throw new Error("Invalid login");
-  return res.json();
+    if (!res.ok) {
+      const errMsg = await res.text();
+      throw new Error(errMsg || "Login failed");
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.error("Login error:", err);
+    throw err;
+  }
 }
 
 export async function getProfile(): Promise<User> {

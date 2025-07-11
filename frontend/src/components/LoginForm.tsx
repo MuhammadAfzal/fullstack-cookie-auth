@@ -1,9 +1,12 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { login } from "../services/api";
+import { User } from "../types";
+import FullScreenLoader from "./FullScreenLoader";
 
 interface Props {
-  onLogin: () => Promise<void>;
+  onLogin: (userData: User) => Promise<void>;
 }
 
 interface FormData {
@@ -16,6 +19,7 @@ export default function LoginForm({ onLogin }: Props) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -30,15 +34,22 @@ export default function LoginForm({ onLogin }: Props) {
 
     try {
       await login(form);
-      await onLogin();
+      const userData: User = { username: form.username }; // Adjust this to match the User type definition
+      await onLogin(userData);
       setSuccess(true);
-      setTimeout(() => navigate("/dashboard"), 1000); // show toast briefly
+      toast.success("✅ Login successful!");
+      setTransitioning(true); // show spinner
+      setTimeout(() => navigate("/dashboard"), 1000); // smooth delay
     } catch {
+      toast.error("❌ Invalid username or password");
       setError("Invalid username or password");
     } finally {
       setLoading(false);
     }
   };
+
+  if (transitioning)
+    return <FullScreenLoader message="Redirecting to dashboard..." />;
 
   return (
     <form
@@ -48,13 +59,6 @@ export default function LoginForm({ onLogin }: Props) {
         handleSubmit();
       }}
     >
-      {/* Toast on success */}
-      {success && (
-        <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-full max-w-sm bg-green-500 text-white px-4 py-2 rounded shadow text-center animate-fade-in">
-          ✅ Login successful! Redirecting...
-        </div>
-      )}
-
       <div>
         <label
           htmlFor="username"
@@ -101,12 +105,6 @@ export default function LoginForm({ onLogin }: Props) {
           </button>
         </div>
       </div>
-
-      {error && (
-        <div className="text-red-500 text-sm text-center" role="alert">
-          {error}
-        </div>
-      )}
 
       <button
         type="submit"
