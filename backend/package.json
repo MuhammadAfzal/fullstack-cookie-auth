@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "serve": "node index.js"
+    "start": "node index.js",
+    "serve": "nodemon index.js",
+    "test": "echo \"Add tests here\" && exit 0"
   },
   "keywords": [],
   "author": "",
