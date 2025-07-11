@@ -39,7 +39,7 @@ export default function LoginForm({ onLogin }: Props) {
       setSuccess(true);
       toast.success("✅ Login successful!");
       setTransitioning(true); // show spinner
-      setTimeout(() => navigate("/dashboard"), 1000); // smooth delay
+      setTimeout(() => navigate("/dashboard"), 500); // smooth delay
     } catch {
       toast.error("❌ Invalid username or password");
       setError("Invalid username or password");
