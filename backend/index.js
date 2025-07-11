@@ -35,7 +35,7 @@ app.post("/api/auth/login", (req, res) => {
     res.cookie("token", "secure-session-token", {
       httpOnly: true,
       secure: true,
-      sameSite: "lax",
+      sameSite: "none",
     });
     res.json({ success: true });
   } else {
