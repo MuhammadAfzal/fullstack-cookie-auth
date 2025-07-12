@@ -6,7 +6,8 @@ interface ImportMetaWithEnv extends ImportMeta {
   };
 }
 
-const BASE_URL = (import.meta as ImportMetaWithEnv).env.VITE_API_URL;
+// const BASE_URL = (import.meta as ImportMetaWithEnv).env.VITE_API_URL;
+const BASE_URL = "http://localhost:5000/api/auth";
 
 export async function login(data: {
   username: string;
@@ -30,6 +31,21 @@ export async function login(data: {
     console.error("Login error:", err);
     throw err;
   }
+}
+
+export async function register(data: {
+  username: string;
+  password: string;
+}): Promise<{ success: boolean }> {
+  const res = await fetch(`${BASE_URL}/register`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) throw new Error("Registration failed");
+  return res.json();
 }
 
 export async function getProfile(): Promise<User> {

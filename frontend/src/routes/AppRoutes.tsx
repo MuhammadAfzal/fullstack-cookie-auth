@@ -3,6 +3,7 @@ import LoginPage from "../pages/LoginPage";
 import DashboardPage from "../pages/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
 import { User } from "../types";
+import RegisterPage from "../pages/RegisterPage";
 
 interface Props {
   user: User | null;
@@ -14,6 +15,7 @@ export default function AppRoutes({ user, onLogin, onLogout }: Props) {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage onLogin={onLogin} />} />
+      <Route path="/register" element={<RegisterPage />} />
       <Route
         path="/dashboard"
         element={

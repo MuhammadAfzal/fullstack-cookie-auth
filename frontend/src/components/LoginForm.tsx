@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { showToast } from "../utils/toast";
 import { login } from "../services/api";
 import { User } from "../types";
@@ -126,6 +126,12 @@ export default function LoginForm({ onLogin }: Props) {
           Forgot password?
         </a>
       </div>
+      <p className="text-sm text-center mt-4 text-gray-600 dark:text-gray-400">
+        Don't have an account?{" "}
+        <Link to="/register" className="text-blue-500 hover:underline">
+          Sign up
+        </Link>
+      </p>
     </form>
   );
 }
