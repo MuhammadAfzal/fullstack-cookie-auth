@@ -1,29 +1,34 @@
-import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { Navigate, useNavigate } from "react-router-dom";
 import AppLayout from "../layout/AppLayout";
 import DashboardChart from "../components/DashboardChart";
-import { useEffect, useState } from "react";
-import { User } from "../types";
+import { logout } from "../services/api";
 
-interface Props {
-  user: User | null;
-  onLogout: () => void;
-}
-
-export default function DashboardPage({ user, onLogout }: Props) {
+export default function DashboardPage() {
+  const { user, setUser } = useAuth();
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timeout = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timeout);
   }, []);
 
-  // ✅ Redirect to login if user is not available
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null);
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
+  if (!user) return <Navigate to="/login" replace />;
 
   return (
-    <AppLayout user={user} onLogout={onLogout}>
+    <AppLayout user={user} onLogout={handleLogout}>
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin h-8 w-8 rounded-full border-4 border-blue-500 border-t-transparent" />

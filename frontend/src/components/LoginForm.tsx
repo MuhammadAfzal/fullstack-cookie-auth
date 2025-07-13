@@ -6,7 +6,7 @@ import { User } from "../types";
 import FullScreenLoader from "./FullScreenLoader";
 
 interface Props {
-  onLogin: (userData: User) => Promise<void>;
+  onLogin: () => Promise<void>;
 }
 
 interface FormData {
@@ -16,8 +16,6 @@ interface FormData {
 
 export default function LoginForm({ onLogin }: Props) {
   const [form, setForm] = useState<FormData>({ username: "", password: "" });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -28,21 +26,16 @@ export default function LoginForm({ onLogin }: Props) {
   };
 
   const handleSubmit = async () => {
-    setError("");
-    setSuccess(false);
     setLoading(true);
 
     try {
       await login(form);
-      const userData: User = { username: form.username }; // Adjust this to match the User type definition
-      await onLogin(userData);
-      setSuccess(true);
+      await onLogin(); // ✅ This fetches the user from /me and sets in context
       showToast("✅ Login successful!", "success");
-      setTransitioning(true); // show spinner
-      setTimeout(() => navigate("/dashboard"), 500); // smooth delay
+      setTransitioning(true);
+      setTimeout(() => navigate("/dashboard"), 500);
     } catch {
       showToast("❌ Invalid credentials", "error");
-      setError("Invalid username or password");
     } finally {
       setLoading(false);
     }

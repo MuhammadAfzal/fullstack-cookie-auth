@@ -2,16 +2,16 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import DashboardPage from "../pages/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
-import { User } from "../types";
 import RegisterPage from "../pages/RegisterPage";
+import { useAuth } from "../context/AuthContext";
 
 interface Props {
-  user: User | null;
   onLogin: () => Promise<void>;
-  onLogout: () => void;
 }
 
-export default function AppRoutes({ user, onLogin, onLogout }: Props) {
+export default function AppRoutes({ onLogin }: Props) {
+  const { user, setUser } = useAuth();
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage onLogin={onLogin} />} />
@@ -19,11 +19,12 @@ export default function AppRoutes({ user, onLogin, onLogout }: Props) {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute user={user}>
-            <DashboardPage user={user as User} onLogout={onLogout} />
+          <ProtectedRoute>
+            <DashboardPage />
           </ProtectedRoute>
         }
       />
+
       <Route
         path="*"
         element={<Navigate to={user ? "/dashboard" : "/login"} />}

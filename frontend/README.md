@@ -9,16 +9,19 @@ This project demonstrates a clean, scalable login flow with a modern UI and prop
 ## 🧰 Tech Stack
 
 **Frontend**
+
 - React (Vite)
 - Tailwind CSS
 - Component-based architecture
 
 **Backend**
+
 - Node.js / Express
 - Cookie-based authentication (HTTP-only)
 - CORS and secure headers
 
 **Dev Tools**
+
 - Vite
 - GitHub CLI
 - Postman / Thunder Client for API testing
@@ -48,3 +51,4 @@ fullstack-cookie-auth/
 │   └── App.jsx
 └── README.md
 
+```
