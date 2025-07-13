@@ -5,7 +5,11 @@ import { register } from "../services/api";
 import { showToast } from "../utils/toast";
 
 export default function RegisterForm() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -45,6 +49,14 @@ export default function RegisterForm() {
         placeholder="Password"
         onChange={handleChange}
         value={form.password}
+        className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring focus:ring-blue-500"
+      />
+      <input
+        type="password"
+        name="confirmPassword"
+        value={form.confirmPassword}
+        onChange={handleChange}
+        placeholder="Confirm password"
         className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring focus:ring-blue-500"
       />
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}

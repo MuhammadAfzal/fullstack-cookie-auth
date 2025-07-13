@@ -1,8 +1,7 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { showToast } from "../utils/toast";
 import { login } from "../services/api";
-import { User } from "../types";
 import FullScreenLoader from "./FullScreenLoader";
 
 interface Props {

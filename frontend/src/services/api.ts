@@ -41,6 +41,7 @@ export async function login(data: {
 export async function register(data: {
   username: string;
   password: string;
+  confirmPassword: string;
 }): Promise<{ success: boolean }> {
   const res = await fetch(`${API_URL}/register`, {
     method: "POST",
