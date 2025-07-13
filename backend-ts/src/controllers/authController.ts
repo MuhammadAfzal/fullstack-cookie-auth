@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as authService from "../services/authService";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export const register = async (
   req: Request,
@@ -8,9 +9,15 @@ export const register = async (
 ) => {
   try {
     const user = await authService.register(req.body);
-    res.status(201).json(user);
-  } catch (err) {
-    next(err);
+    res.status(201).json({ success: true });
+  } catch (err: any) {
+    if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
+      return res.status(409).json({ message: "Username already exists." });
+    }
+
+    // Fallback
+    console.error(err);
+    return res.status(500).json({ message: "Something went wrong." });
   }
 };
 

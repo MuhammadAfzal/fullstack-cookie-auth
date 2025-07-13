@@ -16,20 +16,13 @@ export async function register({
   password: string;
 }) {
   const hashed = await bcrypt.hash(password, SALT_ROUNDS);
-  try {
-    const user = await prisma.user.create({
-      data: {
-        username,
-        password: hashed,
-      },
-    });
-    return user;
-  } catch (err) {
-    if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
-      throw new Error("Username already exists.");
-    }
-    throw err; // Unknown error
-  }
+  const user = await prisma.user.create({
+    data: {
+      username,
+      password: hashed,
+    },
+  });
+  return user;
 }
 
 export async function login({
