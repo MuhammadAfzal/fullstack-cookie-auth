@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UnauthorizedError } from "../utils/errors";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 const SECRET = process.env.JWT_SECRET!;
@@ -15,10 +16,20 @@ export async function register({
   password: string;
 }) {
   const hashed = await bcrypt.hash(password, SALT_ROUNDS);
-  const user = await prisma.user.create({
-    data: { username, password: hashed },
-  });
-  return { id: user.id, username: user.username };
+  try {
+    const user = await prisma.user.create({
+      data: {
+        username,
+        password: hashed,
+      },
+    });
+    return user;
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError && err.code === "P2002") {
+      throw new Error("Username already exists.");
+    }
+    throw err; // Unknown error
+  }
 }
 
 export async function login({
