@@ -1,0 +1,51 @@
+import { Request, Response, NextFunction } from "express";
+import * as authService from "../services/authService";
+
+export const register = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await authService.register(req.body);
+    res.status(201).json(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = await authService.login(req.body);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const logout = (_req: Request, res: Response) => {
+  res.clearCookie("token");
+  res.json({ success: true });
+};
+
+export const getProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await authService.getProfile(req.cookies.token);
+    res.json({ user });
+  } catch (err) {
+    next(err);
+  }
+};

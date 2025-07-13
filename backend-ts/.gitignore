@@ -1,0 +1,23 @@
+node_modules
+# Compiled output
+dist/
+
+
+/src/generated/prisma
+
+# Prisma
+prisma/dev.db
+prisma/migrations/
+# Keep environment variables out of version control
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# Misc
+.DS_Store
+*.sqlite
+coverage/
