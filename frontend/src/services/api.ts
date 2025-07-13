@@ -50,8 +50,13 @@ export async function register(data: {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) throw new Error("Registration failed");
-  return res.json();
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Registration failed");
+  }
+
+  return result;
 }
 
 export async function getProfile(): Promise<User> {

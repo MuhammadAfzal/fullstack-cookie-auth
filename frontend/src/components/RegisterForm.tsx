@@ -26,8 +26,12 @@ export default function RegisterForm() {
       showToast("Registered successfully! 🎉", "success");
       navigate("/login");
     } catch (err: any) {
+      if (err?.message?.includes("Username already exists")) {
+        showToast("❌ Username is already taken", "error");
+      } else {
+        showToast(err.message || "Failed to register", "error");
+      }
       setError(err.message || "Failed to register");
-      showToast(err.message || "Failed to register", "error");
     } finally {
       setLoading(false);
     }
