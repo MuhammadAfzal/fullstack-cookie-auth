@@ -1,18 +1,18 @@
 import { Request, Response, NextFunction } from "express";
+import { AppError } from "../utils/AppError";
 
-export function errorHandler(
-  err: any,
+export function errorMiddleware(
+  err: Error,
   req: Request,
   res: Response,
-  _next: NextFunction
+  next: NextFunction
 ) {
-  console.error("❌ Error:", err);
+  console.error(err);
 
-  if (err.name === "UnauthorizedError") {
-    return res.status(401).json({ message: "Unauthorized" });
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json({ message: err.message });
   }
 
-  return res
-    .status(err.status || 500)
-    .json({ message: err.message || "Internal Server Error" });
+  // Fallback for unhandled errors
+  return res.status(500).json({ message: "Internal server error" });
 }

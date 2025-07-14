@@ -6,7 +6,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
 import authRoutes from "./routes/authRoutes";
-import { errorHandler } from "./middlewares/errorHandler";
+import { errorMiddleware } from "./middlewares/errorHandler";
 
 dotenv.config({ path: path.resolve(__dirname, `../.env`) });
 
@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 
 // Global Error Handler
-app.use(errorHandler);
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
