@@ -19,7 +19,7 @@ export async function login(data: {
   password: string;
 }): Promise<User> {
   try {
-    const res = await fetch(`${API_URL}/login`, {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -43,7 +43,7 @@ export async function register(data: {
   password: string;
   confirmPassword: string;
 }): Promise<{ success: boolean }> {
-  const res = await fetch(`${API_URL}/register`, {
+  const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
@@ -60,7 +60,7 @@ export async function register(data: {
 }
 
 export async function getProfile(): Promise<{ user: User }> {
-  const res = await fetch(`${API_URL}/me`, {
+  const res = await fetch(`${API_URL}/auth/me`, {
     credentials: "include",
   });
 
@@ -69,10 +69,34 @@ export async function getProfile(): Promise<{ user: User }> {
 }
 
 export async function logout(): Promise<{ success: boolean }> {
-  const res = await fetch(`${API_URL}/logout`, {
+  const res = await fetch(`${API_URL}/auth/logout`, {
     method: "POST",
     credentials: "include",
   });
 
+  return res.json();
+}
+
+export async function getDashboardSummary() {
+  const res = await fetch(`${API_URL}/dashboard/summary`, {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to fetch dashboard summary");
+  return res.json();
+}
+
+export async function getDashboardChartData() {
+  const res = await fetch(`${API_URL}/dashboard/chart-data`, {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to fetch dashboard chart data");
+  return res.json();
+}
+
+export async function getDashboardActivity() {
+  const res = await fetch(`${API_URL}/dashboard/activity`, {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to fetch dashboard activity");
   return res.json();
 }

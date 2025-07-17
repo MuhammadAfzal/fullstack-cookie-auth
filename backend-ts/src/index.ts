@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import path from "path";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
+import dashboardRoutes from "./routes/dashboardRoutes";
 import { errorMiddleware } from "./middlewares/errorHandler";
 
 dotenv.config({ path: path.resolve(__dirname, `../.env`) });
@@ -24,6 +25,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", userRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Global Error Handler
 app.use(errorMiddleware);

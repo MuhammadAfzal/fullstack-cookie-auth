@@ -20,20 +20,33 @@ ChartJS.register(
   Legend
 );
 
-const data = {
-  labels: ["Jan", "Feb", "Mar", "Apr", "May"],
-  datasets: [
-    {
-      label: "Visitors",
-      data: [120, 190, 300, 500, 200],
-      backgroundColor: "rgba(59, 130, 246, 0.5)", // Tailwind blue-500/50
-    },
-  ],
-};
-
-export default function DashboardChart() {
+// Accept chartData as a prop
+export default function DashboardChart({ chartData }: { chartData?: any }) {
   const chartRef = useRef<any>(null);
   const { theme } = useTheme();
+
+  // Fallback to empty chart if no data
+  const data = chartData
+    ? {
+        labels: chartData.labels,
+        datasets: [
+          {
+            label: "New Users",
+            data: chartData.data,
+            backgroundColor: "rgba(59, 130, 246, 0.5)",
+          },
+        ],
+      }
+    : {
+        labels: [],
+        datasets: [
+          {
+            label: "New Users",
+            data: [],
+            backgroundColor: "rgba(59, 130, 246, 0.5)",
+          },
+        ],
+      };
 
   const options = useMemo(
     () => ({
@@ -42,23 +55,23 @@ export default function DashboardChart() {
       plugins: {
         legend: {
           labels: {
-            color: theme === "dark" ? "#e5e7eb" : "#374151", // gray-200 / gray-700
+            color: theme === "dark" ? "#e5e7eb" : "#374151",
           },
           position: "top" as const,
         },
         title: {
           display: true,
-          text: "Monthly Visitors",
-          color: theme === "dark" ? "#f3f4f6" : "#111827", // gray-100 / gray-900
+          text: "Monthly New Users",
+          color: theme === "dark" ? "#f3f4f6" : "#111827",
         },
       },
       scales: {
         x: {
           ticks: {
-            color: theme === "dark" ? "#d1d5db" : "#374151", // gray-300 / gray-700
+            color: theme === "dark" ? "#d1d5db" : "#374151",
           },
           grid: {
-            color: theme === "dark" ? "#374151" : "#e5e7eb", // gray-700 / gray-200
+            color: theme === "dark" ? "#374151" : "#e5e7eb",
           },
         },
         y: {
