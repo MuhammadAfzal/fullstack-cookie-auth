@@ -6,6 +6,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import path from "path";
 import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
 import { errorMiddleware } from "./middlewares/errorHandler";
 
 dotenv.config({ path: path.resolve(__dirname, `../.env`) });
@@ -22,6 +23,7 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api", userRoutes);
 
 // Global Error Handler
 app.use(errorMiddleware);

@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
@@ -7,18 +6,24 @@ import {
   BadRequestError,
 } from "../utils/AppError";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Role } from "../constants/roles";
+import { prisma } from "../db";
 
-const prisma = new PrismaClient();
 const SECRET = process.env.JWT_SECRET!;
 const SALT_ROUNDS = 10;
 
 interface AuthData {
   username: string;
   password: string;
+  role?: Role;
 }
 
 // 🔐 Register User
-export async function register({ username, password }: AuthData) {
+export async function register({
+  username,
+  password,
+  role = Role.USER,
+}: AuthData) {
   const hashed = await bcrypt.hash(password, SALT_ROUNDS);
 
   try {
@@ -26,6 +31,7 @@ export async function register({ username, password }: AuthData) {
       data: {
         username,
         password: hashed,
+        role,
       },
     });
 
@@ -50,9 +56,13 @@ export async function login({ username, password }: AuthData) {
     throw new UnauthorizedError("Invalid credentials");
   }
 
-  const token = jwt.sign({ id: user.id, username: user.username }, SECRET, {
-    expiresIn: "1d",
-  });
+  const token = jwt.sign(
+    { id: user.id, username: user.username, role: user.role },
+    SECRET,
+    {
+      expiresIn: "1d",
+    }
+  );
 
   return token;
 }
@@ -61,14 +71,17 @@ export async function login({ username, password }: AuthData) {
 export async function getProfile(token: string) {
   try {
     const decoded = jwt.verify(token, SECRET) as { id: number };
-    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        username: true,
+        role: true, // 👈 include the role here
+      },
+    });
 
     if (!user) throw new UnauthorizedError("User not found");
-
-    return {
-      id: user.id,
-      username: user.username,
-    };
+    return user;
   } catch {
     throw new UnauthorizedError("Invalid token");
   }

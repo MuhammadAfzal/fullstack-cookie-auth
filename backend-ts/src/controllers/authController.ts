@@ -51,6 +51,7 @@ export const getProfile = async (
 ) => {
   try {
     const user = await authService.getProfile(req.cookies.token);
+    console.log("user", user);
     res.json({ user });
   } catch (err) {
     next(err);
