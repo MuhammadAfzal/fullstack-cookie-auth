@@ -9,7 +9,7 @@ function App() {
   const handleLogin = async () => {
     try {
       const data = await getProfile();
-      setUser(data);
+      setUser({ ...data.user });
     } catch (err) {
       console.error(err);
     }

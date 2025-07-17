@@ -39,7 +39,7 @@ export default function DashboardPage() {
             Welcome, {user.username} 👋
           </h1>
           <p className="text-gray-700 dark:text-gray-300">
-            Here’s your dashboard overview.
+            This is your personal dashboard.
           </p>
           <DashboardChart />
         </>

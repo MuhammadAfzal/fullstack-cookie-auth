@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Run only on mount
     getProfile()
-      .then((data) => setUser(data as User))
+      .then((data) => setUser(data.user as User))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);

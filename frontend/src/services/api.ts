@@ -59,7 +59,7 @@ export async function register(data: {
   return result;
 }
 
-export async function getProfile(): Promise<User> {
+export async function getProfile(): Promise<{ user: User }> {
   const res = await fetch(`${API_URL}/me`, {
     credentials: "include",
   });
