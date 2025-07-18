@@ -3,11 +3,14 @@ import { useAuth } from "../context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import AppLayout from "../layout/AppLayout";
 import DashboardChart from "../components/DashboardChart";
+import DashboardStats from "../components/DashboardStats";
+import EnhancedActivityFeed from "../components/EnhancedActivityFeed";
 import {
   logout,
   getDashboardSummary,
   getDashboardChartData,
   getDashboardActivity,
+  getDashboardMetrics,
 } from "../services/api";
 import { FiUsers, FiUserPlus, FiActivity } from "react-icons/fi";
 import { formatDistanceToNow } from "date-fns";
@@ -18,21 +21,25 @@ export default function DashboardPage() {
   const [summary, setSummary] = useState<any>(null);
   const [chartData, setChartData] = useState<any>(null);
   const [activity, setActivity] = useState<any[]>([]);
+  const [metrics, setMetrics] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchDashboard() {
       try {
-        const [summaryRes, chartRes, activityRes] = await Promise.all([
-          getDashboardSummary(),
-          getDashboardChartData(),
-          getDashboardActivity(),
-        ]);
+        const [summaryRes, chartRes, activityRes, metricsRes] =
+          await Promise.all([
+            getDashboardSummary(),
+            getDashboardChartData(),
+            getDashboardActivity(),
+            getDashboardMetrics(),
+          ]);
         setSummary(summaryRes);
         setChartData(chartRes);
         setActivity(activityRes);
+        setMetrics(metricsRes);
       } catch (err) {
-        // Optionally handle error
+        console.error("Failed to fetch dashboard data:", err);
       } finally {
         setLoading(false);
       }
@@ -59,82 +66,66 @@ export default function DashboardPage() {
           <div className="animate-spin h-8 w-8 rounded-full border-4 border-blue-500 border-t-transparent" />
         </div>
       ) : (
-        <>
-          <h1 className="text-3xl font-extrabold mb-2 text-gray-900 dark:text-white">
-            Welcome, {user.username} 👋
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Here’s a quick overview of your app’s activity and growth.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="flex items-center bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 shadow rounded-lg p-5">
-              <div className="p-3 bg-blue-500 text-white rounded-full mr-4">
-                <FiUsers size={28} />
-              </div>
+        <div className="space-y-8">
+          {/* Welcome Header */}
+          <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
+            <div className="flex items-center justify-between">
               <div>
-                <div className="text-gray-500 dark:text-gray-300 text-xs uppercase font-semibold">
-                  Total Users
-                </div>
-                <div className="text-2xl font-bold">
-                  {summary?.totalUsers ?? "-"}
+                <h1 className="text-3xl font-bold mb-2">
+                  Welcome back, {user.username}! 👋
+                </h1>
+                <p className="text-blue-100 text-lg">
+                  Here's what's happening with your application today
+                </p>
+              </div>
+              <div className="hidden md:block">
+                <div className="text-right">
+                  <p className="text-blue-100 text-sm">Last updated</p>
+                  <p className="font-semibold">
+                    {new Date().toLocaleTimeString()}
+                  </p>
                 </div>
               </div>
             </div>
-            <div className="flex items-center bg-gradient-to-r from-green-100 to-green-200 dark:from-green-900 dark:to-green-800 shadow rounded-lg p-5">
-              <div className="p-3 bg-green-500 text-white rounded-full mr-4">
-                <FiUserPlus size={28} />
-              </div>
-              <div>
-                <div className="text-gray-500 dark:text-gray-300 text-xs uppercase font-semibold">
-                  New This Month
-                </div>
-                <div className="text-2xl font-bold">
-                  {summary?.newUsersThisMonth ?? "-"}
-                </div>
-              </div>
+          </div>
+
+          {/* Dashboard Stats */}
+          <DashboardStats summary={summary} metrics={metrics} />
+
+          {/* Charts and Activity Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Chart Section */}
+            <div className="lg:col-span-2">
+              <DashboardChart chartData={chartData} />
             </div>
-            {/* Add more summary cards as needed */}
+
+            {/* Activity Feed */}
+            <div className="lg:col-span-1">
+              <EnhancedActivityFeed activity={activity} />
+            </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-8">
-            <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
-              User Growth
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
-              Track new user registrations over the past 6 months.
-            </p>
-            <DashboardChart chartData={chartData} />
+
+          {/* Quick Actions */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Quick Actions
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button className="flex items-center justify-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+                <FiUsers className="w-5 h-5" />
+                <span className="font-medium">View All Users</span>
+              </button>
+              <button className="flex items-center justify-center gap-3 p-4 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
+                <FiUserPlus className="w-5 h-5" />
+                <span className="font-medium">Add New User</span>
+              </button>
+              <button className="flex items-center justify-center gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
+                <FiActivity className="w-5 h-5" />
+                <span className="font-medium">View Reports</span>
+              </button>
+            </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white flex items-center gap-2">
-              <FiActivity className="text-blue-500" /> Recent Activity
-            </h2>
-            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-              {activity.length === 0 ? (
-                <li className="text-gray-500 dark:text-gray-300 py-2">
-                  No recent activity.
-                </li>
-              ) : (
-                activity.map((item, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-center gap-3 py-3 text-gray-700 dark:text-gray-200"
-                  >
-                    <span className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-200 rounded-full p-2">
-                      <FiUserPlus size={20} />
-                    </span>
-                    <span className="font-semibold">{item.username}</span>
-                    <span className="text-xs text-gray-500 ml-2">
-                      registered{" "}
-                      {formatDistanceToNow(new Date(item.date), {
-                        addSuffix: true,
-                      })}
-                    </span>
-                  </li>
-                ))
-              )}
-            </ul>
-          </div>
-        </>
+        </div>
       )}
     </AppLayout>
   );

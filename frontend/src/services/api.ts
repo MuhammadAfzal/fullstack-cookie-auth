@@ -100,3 +100,11 @@ export async function getDashboardActivity() {
   if (!res.ok) throw new Error("Failed to fetch dashboard activity");
   return res.json();
 }
+
+export async function getDashboardMetrics() {
+  const res = await fetch(`${API_URL}/dashboard/metrics`, {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to fetch dashboard metrics");
+  return res.json();
+}

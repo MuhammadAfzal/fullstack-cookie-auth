@@ -6,10 +6,13 @@ import {
   Title,
   Tooltip,
   Legend,
+  LineElement,
+  PointElement,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
-import { useRef, useEffect, useMemo } from "react";
+import { Bar, Line } from "react-chartjs-2";
+import { useRef, useEffect, useMemo, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
+import { FiBarChart2, FiTrendingUp } from "react-icons/fi";
 
 ChartJS.register(
   CategoryScale,
@@ -17,36 +20,56 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  LineElement,
+  PointElement
 );
 
-// Accept chartData as a prop
-export default function DashboardChart({ chartData }: { chartData?: any }) {
+interface ChartData {
+  monthly?: {
+    labels: string[];
+    data: number[];
+  };
+  daily?: {
+    labels: string[];
+    data: number[];
+  };
+}
+
+export default function DashboardChart({
+  chartData,
+}: {
+  chartData?: ChartData;
+}) {
   const chartRef = useRef<any>(null);
   const { theme } = useTheme();
+  const [chartType, setChartType] = useState<"monthly" | "daily">("monthly");
 
-  // Fallback to empty chart if no data
-  const data = chartData
-    ? {
-        labels: chartData.labels,
-        datasets: [
-          {
-            label: "New Users",
-            data: chartData.data,
-            backgroundColor: "rgba(59, 130, 246, 0.5)",
-          },
-        ],
-      }
-    : {
-        labels: [],
-        datasets: [
-          {
-            label: "New Users",
-            data: [],
-            backgroundColor: "rgba(59, 130, 246, 0.5)",
-          },
-        ],
-      };
+  // Use monthly data by default, fallback to daily if monthly not available
+  const currentData = chartData?.monthly ||
+    chartData?.daily || { labels: [], data: [] };
+  const hasBothTypes = chartData?.monthly && chartData?.daily;
+
+  const data = {
+    labels: currentData.labels,
+    datasets: [
+      {
+        label:
+          chartType === "monthly" ? "Monthly New Users" : "Daily New Users",
+        data: currentData.data,
+        backgroundColor:
+          chartType === "monthly"
+            ? "rgba(59, 130, 246, 0.5)"
+            : "rgba(16, 185, 129, 0.5)",
+        borderColor:
+          chartType === "monthly"
+            ? "rgba(59, 130, 246, 1)"
+            : "rgba(16, 185, 129, 1)",
+        borderWidth: 2,
+        tension: 0.4,
+      },
+    ],
+  };
 
   const options = useMemo(
     () => ({
@@ -61,7 +84,10 @@ export default function DashboardChart({ chartData }: { chartData?: any }) {
         },
         title: {
           display: true,
-          text: "Monthly New Users",
+          text:
+            chartType === "monthly"
+              ? "Monthly User Growth"
+              : "Daily User Activity",
           color: theme === "dark" ? "#f3f4f6" : "#111827",
         },
       },
@@ -84,7 +110,7 @@ export default function DashboardChart({ chartData }: { chartData?: any }) {
         },
       },
     }),
-    [theme]
+    [theme, chartType]
   );
 
   useEffect(() => {
@@ -99,8 +125,46 @@ export default function DashboardChart({ chartData }: { chartData?: any }) {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded shadow-md mt-6 h-[300px] md:h-[400px]">
-      <Bar ref={chartRef} options={options} data={data} />
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+      {hasBothTypes && (
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            User Growth Analytics
+          </h3>
+          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <button
+              onClick={() => setChartType("monthly")}
+              className={`flex items-center gap-2 px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                chartType === "monthly"
+                  ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+              }`}
+            >
+              <FiBarChart2 className="w-4 h-4" />
+              Monthly
+            </button>
+            <button
+              onClick={() => setChartType("daily")}
+              className={`flex items-center gap-2 px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                chartType === "daily"
+                  ? "bg-white dark:bg-gray-600 text-green-600 dark:text-green-400 shadow-sm"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+              }`}
+            >
+              <FiTrendingUp className="w-4 h-4" />
+              Daily
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="h-[400px]">
+        {chartType === "monthly" ? (
+          <Bar ref={chartRef} options={options} data={data} />
+        ) : (
+          <Line ref={chartRef} options={options} data={data} />
+        )}
+      </div>
     </div>
   );
 }
