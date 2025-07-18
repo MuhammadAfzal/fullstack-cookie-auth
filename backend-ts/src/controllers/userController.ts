@@ -8,7 +8,9 @@ export async function getProfile(req: Request, res: Response) {
   res.json(profile);
 }
 
-export async function getAllUsers(_req: Request, res: Response) {
-  const users = await userService.getAllUsers();
-  res.json(users);
+export async function getAllUsers(req: Request, res: Response) {
+  const skip = parseInt(req.query.skip as string) || 0;
+  const take = parseInt(req.query.take as string) || 50;
+  const { users, total } = await userService.getAllUsers({ skip, take });
+  res.json({ users, total });
 }
