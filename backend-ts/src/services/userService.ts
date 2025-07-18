@@ -1,4 +1,5 @@
 import { prisma } from "../db";
+import redis from "../utils/redisClient";
 
 export async function getUserProfile(id: number) {
   return prisma.user.findUnique({
@@ -26,6 +27,11 @@ export async function getAllUsers({
   skip?: number;
   take?: number;
 }) {
+  const cacheKey = `users:${skip}:${take}`;
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    return JSON.parse(cached);
+  }
   const [users, total] = await Promise.all([
     prisma.user.findMany({
       skip,
@@ -47,5 +53,7 @@ export async function getAllUsers({
     }),
     prisma.user.count(),
   ]);
-  return { users, total };
+  const result = { users, total };
+  await redis.set(cacheKey, JSON.stringify(result), "EX", 30); // 30 seconds
+  return result;
 }
