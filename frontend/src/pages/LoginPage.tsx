@@ -1,3 +1,5 @@
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import LoginForm from "../components/LoginForm";
 import { FiShield, FiZap } from "react-icons/fi";
 
@@ -6,6 +8,13 @@ interface Props {
 }
 
 export default function LoginPage({ onLogin }: Props) {
+  const { user } = useAuth();
+
+  // Redirect to dashboard if user is already logged in
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 px-4 py-12">
       <div className="w-full max-w-md">

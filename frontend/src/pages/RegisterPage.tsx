@@ -1,8 +1,17 @@
 // src/pages/RegisterPage.tsx
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import RegisterForm from "../components/RegisterForm";
 import { FiShield, FiZap, FiUsers } from "react-icons/fi";
 
 export default function RegisterPage() {
+  const { user } = useAuth();
+
+  // Redirect to dashboard if user is already logged in
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 px-4 py-12">
       <div className="w-full max-w-md">
