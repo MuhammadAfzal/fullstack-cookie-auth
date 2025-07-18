@@ -3,7 +3,19 @@ import { prisma } from "../db";
 export async function getUserProfile(id: number) {
   return prisma.user.findUnique({
     where: { id },
-    select: { id: true, username: true, role: true, createdAt: true },
+    select: {
+      id: true,
+      username: true,
+      role: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      bio: true,
+      avatar: true,
+      phone: true,
+      createdAt: true,
+      updatedAt: true,
+    },
   });
 }
 
@@ -19,7 +31,19 @@ export async function getAllUsers({
       skip,
       take,
       orderBy: { id: "asc" },
-      select: { id: true, username: true, role: true, createdAt: true },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        bio: true,
+        avatar: true,
+        phone: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     }),
     prisma.user.count(),
   ]);
