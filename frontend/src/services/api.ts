@@ -11,8 +11,10 @@ interface ImportMetaWithEnv extends ImportMeta {
 
 const isDev = (import.meta as ImportMetaWithEnv).env.MODE === "development";
 const API_URL = isDev
-  ? (import.meta as ImportMetaWithEnv).env.VITE_API_URL_DEV
-  : (import.meta as ImportMetaWithEnv).env.VITE_API_URL_PROD;
+  ? (import.meta as ImportMetaWithEnv).env.VITE_API_URL_DEV ||
+    "http://localhost:5000/api"
+  : (import.meta as ImportMetaWithEnv).env.VITE_API_URL_PROD ||
+    "http://localhost:5000/api";
 
 export async function login(data: {
   username: string;
@@ -106,5 +108,52 @@ export async function getDashboardMetrics() {
     credentials: "include",
   });
   if (!res.ok) throw new Error("Failed to fetch dashboard metrics");
+  return res.json();
+}
+
+export async function getProfileData(): Promise<any> {
+  const res = await fetch(`${API_URL}/profile`, {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to fetch profile");
+  return res.json();
+}
+
+export async function updateProfile(data: any): Promise<any> {
+  const res = await fetch(`${API_URL}/profile`, {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Failed to update profile");
+  }
+  return res.json();
+}
+
+export async function uploadAvatar(file: File): Promise<any> {
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  const res = await fetch(`${API_URL}/profile/avatar`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Failed to upload avatar");
+  }
+  return res.json();
+}
+
+export async function deleteAvatar(): Promise<any> {
+  const res = await fetch(`${API_URL}/profile/avatar`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to delete avatar");
   return res.json();
 }
