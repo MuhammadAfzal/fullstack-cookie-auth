@@ -5,7 +5,7 @@ import AppLayout from "../layout/AppLayout";
 import { Navigate, useNavigate } from "react-router-dom";
 import { logout } from "../services/api";
 import { FixedSizeList as List, ListOnScrollProps } from "react-window";
-import { FiUser, FiSearch } from "react-icons/fi";
+import { FiUser, FiSearch, FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 
 const PAGE_SIZE = 50;
 
@@ -92,6 +92,19 @@ export default function AllUsersPage() {
     }
   };
 
+  // User action handlers (placeholders)
+  const handleView = (u: any) => {
+    alert(`View user: ${u.username}`);
+  };
+  const handleEdit = (u: any) => {
+    alert(`Edit user: ${u.username}`);
+  };
+  const handleDelete = (u: any) => {
+    if (window.confirm(`Are you sure you want to delete user ${u.username}?`)) {
+      alert(`Deleted user: ${u.username}`);
+    }
+  };
+
   if (!user) return <Navigate to="/login" replace />;
 
   // Row renderer for react-window
@@ -101,12 +114,12 @@ export default function AllUsersPage() {
     return (
       <div
         style={style}
-        className="flex items-center border-b border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/40 transition-colors px-2"
+        className="flex items-center border-b border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/40 transition-colors px-0 md:px-2"
         role="row"
         tabIndex={0}
         aria-label={`User ${u.username}`}
       >
-        <div className="w-1/6 flex items-center gap-2 px-2 py-3">
+        <div className="w-1/12 flex items-center gap-2 px-2 py-3">
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-200 to-purple-200 dark:from-blue-900 dark:to-purple-800 flex items-center justify-center text-lg font-bold text-blue-700 dark:text-blue-200">
             <FiUser className="w-5 h-5" />
           </div>
@@ -114,10 +127,10 @@ export default function AllUsersPage() {
             {u.id}
           </span>
         </div>
-        <div className="w-3/6 px-2 py-3 text-base font-medium text-gray-900 dark:text-gray-100 truncate">
+        <div className="w-4/12 px-2 py-3 text-base font-medium text-gray-900 dark:text-gray-100 truncate">
           {u.username}
         </div>
-        <div className="w-2/6 px-2 py-3">
+        <div className="w-2/12 px-2 py-3">
           <span
             className={`inline-block px-3 py-1 text-xs font-semibold rounded-full shadow-sm ${
               u.role === "ADMIN"
@@ -128,6 +141,32 @@ export default function AllUsersPage() {
             {u.role}
           </span>
         </div>
+        <div className="w-5/12 flex items-center gap-2 px-2 py-3 justify-end">
+          <button
+            className="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+            title="View"
+            aria-label="View user"
+            onClick={() => handleView(u)}
+          >
+            <FiEye className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+          </button>
+          <button
+            className="p-2 rounded-full hover:bg-yellow-100 dark:hover:bg-yellow-800 transition-colors"
+            title="Edit"
+            aria-label="Edit user"
+            onClick={() => handleEdit(u)}
+          >
+            <FiEdit2 className="w-5 h-5 text-yellow-600 dark:text-yellow-300" />
+          </button>
+          <button
+            className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-800 transition-colors"
+            title="Delete"
+            aria-label="Delete user"
+            onClick={() => handleDelete(u)}
+          >
+            <FiTrash2 className="w-5 h-5 text-red-600 dark:text-red-300" />
+          </button>
+        </div>
       </div>
     );
   };
@@ -135,8 +174,8 @@ export default function AllUsersPage() {
   return (
     <AppLayout user={user} onLogout={handleLogout}>
       <RoleGate allowedRoles={["ADMIN"]}>
-        <div className="w-full max-w-6xl mx-auto px-2 md:px-6 py-8">
-          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 p-0 md:p-8">
+        <div className="w-full max-w-[98vw] md:max-w-[95vw] lg:max-w-[90vw] xl:max-w-[1200px] mx-auto px-0 md:px-2 py-6 md:py-8">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-0 md:p-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 px-4 pt-6 md:px-0 md:pt-0">
               <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
                 👥 All Registered Users
@@ -156,9 +195,10 @@ export default function AllUsersPage() {
 
             <div className="overflow-x-auto rounded-2xl shadow bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
               <div className="sticky top-0 z-10 flex bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 font-semibold text-gray-700 dark:text-gray-200 text-sm border-b border-gray-200 dark:border-gray-700">
-                <div className="w-1/6 px-2 py-3">ID</div>
-                <div className="w-3/6 px-2 py-3">Username</div>
-                <div className="w-2/6 px-2 py-3">Role</div>
+                <div className="w-1/12 px-2 py-3">ID</div>
+                <div className="w-4/12 px-2 py-3">Username</div>
+                <div className="w-2/12 px-2 py-3">Role</div>
+                <div className="w-5/12 px-2 py-3 text-right">Actions</div>
               </div>
               <div style={{ height: 500, width: "100%" }}>
                 {loading ? (
