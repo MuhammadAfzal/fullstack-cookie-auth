@@ -15,3 +15,8 @@ export async function getDashboardActivity(req: Request, res: Response) {
   const activity = await dashboardService.getDashboardActivity();
   res.json(activity);
 }
+
+export async function getDashboardMetrics(req: Request, res: Response) {
+  const metrics = await dashboardService.getDashboardMetrics();
+  res.json(metrics);
+}
