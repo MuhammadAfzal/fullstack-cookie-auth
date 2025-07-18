@@ -25,5 +25,12 @@ model User {
   username  String   @unique
   password  String
   role      Role     @default(USER)
+  email     String?  @unique
+  firstName String?
+  lastName  String?
+  bio       String?  @db.Text
+  avatar    String?
+  phone     String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
