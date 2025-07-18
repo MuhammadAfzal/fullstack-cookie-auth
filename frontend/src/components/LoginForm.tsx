@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { showToast } from "../utils/toast";
 import { login } from "../services/api";
 import FullScreenLoader from "./FullScreenLoader";
+import { FiUser, FiLock, FiEye, FiEyeOff, FiArrowRight } from "react-icons/fi";
 
 interface Props {
   onLogin: () => Promise<void>;
@@ -45,39 +46,33 @@ export default function LoginForm({ onLogin }: Props) {
 
   return (
     <form
-      className="space-y-4 relative"
+      className="space-y-6"
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit();
       }}
     >
-      <div>
-        <label
-          htmlFor="username"
-          className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-200"
-        >
-          Username
-        </label>
-        <input
-          id="username"
-          name="username"
-          autoFocus
-          placeholder="Enter your username"
-          value={form.username}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring focus:ring-blue-500"
-          required
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="password"
-          className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-200"
-        >
-          Password
-        </label>
+      <div className="space-y-4">
         <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <FiUser className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            id="username"
+            name="username"
+            autoFocus
+            placeholder="Enter your username"
+            value={form.username}
+            onChange={handleChange}
+            className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            required
+          />
+        </div>
+
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <FiLock className="h-5 w-5 text-gray-400" />
+          </div>
           <input
             id="password"
             name="password"
@@ -85,45 +80,74 @@ export default function LoginForm({ onLogin }: Props) {
             placeholder="Enter your password"
             value={form.password}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring focus:ring-blue-500 pr-10"
+            className="block w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             required
           />
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-2 top-2 text-sm text-gray-500 dark:text-gray-300"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           >
-            {showPassword ? "🙈" : "👁️"}
+            {showPassword ? (
+              <FiEyeOff className="h-5 w-5" />
+            ) : (
+              <FiEye className="h-5 w-5" />
+            )}
           </button>
         </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          />
+          <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+            Remember me
+          </span>
+        </label>
+        <a
+          href="#"
+          className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-medium transition-colors"
+        >
+          Forgot password?
+        </a>
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className={`w-full py-2 rounded-lg transition-colors text-white font-medium ${
+        className={`w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-xl font-semibold text-white transition-all duration-200 ${
           loading
-            ? "bg-blue-300 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600"
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
         }`}
       >
-        {loading ? "Logging in..." : "Login"}
+        {loading ? (
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <span>Signing in...</span>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-2">
+            <span>Sign In</span>
+            <FiArrowRight className="w-4 h-4" />
+          </div>
+        )}
       </button>
 
-      <div className="text-center text-sm">
-        <a
-          href="#"
-          className="text-blue-600 dark:text-blue-400 hover:underline"
-        >
-          Forgot password?
-        </a>
+      <div className="text-center">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
+          >
+            Create one now
+          </Link>
+        </p>
       </div>
-      <p className="text-sm text-center mt-4 text-gray-600 dark:text-gray-400">
-        Don't have an account?{" "}
-        <Link to="/register" className="text-blue-500 hover:underline">
-          Sign up
-        </Link>
-      </p>
     </form>
   );
 }
