@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import { FiMenu, FiUser, FiHome, FiSettings } from "react-icons/fi";
+import { FiMenu, FiUser, FiHome, FiSettings, FiUsers } from "react-icons/fi";
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -11,6 +11,7 @@ export default function Sidebar() {
 
   const navItems = [
     { to: "/dashboard", label: "Dashboard", icon: <FiHome /> },
+    { to: "/admin/users", label: "Users", icon: <FiUsers /> },
     { to: "/profile", label: "Profile", icon: <FiUser /> },
     { to: "/settings", label: "Settings", icon: <FiSettings /> },
   ];
