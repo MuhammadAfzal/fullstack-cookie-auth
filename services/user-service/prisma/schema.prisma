@@ -1,0 +1,223 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  firstName String?
+  lastName  String?
+  avatar    String?
+  bio       String?
+  location  String?
+  website   String?
+  phone     String?
+  dateOfBirth DateTime?
+  gender    Gender?
+  isActive  Boolean  @default(true)
+  isVerified Boolean @default(false)
+  lastLoginAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User preferences
+  preferences UserPreferences?
+
+  // User statistics
+  statistics UserStatistics?
+
+  // User activities
+  activities UserActivity[]
+
+  // User connections
+  followers  UserConnection[] @relation("UserFollowers")
+  following  UserConnection[] @relation("UserFollowing")
+
+  // User posts (if this service handles posts)
+  posts Post[]
+
+  // User comments
+  comments Comment[]
+
+  @@map("users")
+}
+
+model UserPreferences {
+  id                String @id @default(cuid())
+  userId            String @unique
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Notification preferences
+  emailNotifications Boolean @default(true)
+  pushNotifications  Boolean @default(true)
+  smsNotifications   Boolean @default(false)
+  
+  // Privacy preferences
+  profileVisibility ProfileVisibility @default(PUBLIC)
+  showEmail         Boolean @default(false)
+  showPhone         Boolean @default(false)
+  showLocation      Boolean @default(true)
+  
+  // Theme preferences
+  theme             Theme @default(LIGHT)
+  language          String @default("en")
+  timezone          String @default("UTC")
+  
+  // Content preferences
+  autoPlayVideos    Boolean @default(true)
+  showMatureContent Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_preferences")
+}
+
+model UserStatistics {
+  id                String @id @default(cuid())
+  userId            String @unique
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Activity statistics
+  totalPosts        Int @default(0)
+  totalComments     Int @default(0)
+  totalLikes        Int @default(0)
+  totalViews        Int @default(0)
+  
+  // Social statistics
+  followersCount    Int @default(0)
+  followingCount    Int @default(0)
+  
+  // Engagement statistics
+  averageEngagement Float @default(0)
+  lastActivityAt    DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_statistics")
+}
+
+model UserActivity {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type      ActivityType
+  title     String
+  description String?
+  metadata  Json?
+  
+  createdAt DateTime @default(now())
+
+  @@map("user_activities")
+}
+
+model UserConnection {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+  
+  status      ConnectionStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([followerId, followingId])
+  @@map("user_connections")
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title       String
+  content     String
+  imageUrl    String?
+  isPublished Boolean  @default(false)
+  isDeleted   Boolean  @default(false)
+  
+  // Post statistics
+  viewCount   Int      @default(0)
+  likeCount   Int      @default(0)
+  commentCount Int     @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Post comments
+  comments    Comment[]
+
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  postId    String?
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  parentId  String?
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
+  
+  content   String
+  isDeleted Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("comments")
+}
+
+// Enums
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  PRIVATE
+  FRIENDS_ONLY
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum ActivityType {
+  LOGIN
+  POST_CREATED
+  POST_LIKED
+  COMMENT_ADDED
+  PROFILE_UPDATED
+  PASSWORD_CHANGED
+  EMAIL_VERIFIED
+  FOLLOWED_USER
+  UNFOLLOWED_USER
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  BLOCKED
+} 
