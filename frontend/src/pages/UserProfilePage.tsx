@@ -3,13 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AppLayout from "../layout/AppLayout";
 import RoleGate from "../components/RoleGate";
-import {
-  logout,
-  getProfileData,
-  updateProfile,
-  uploadAvatar,
-  deleteAvatar,
-} from "../services/api";
+import { apiClient } from "../services/api";
 import {
   FiUser,
   FiShield,
@@ -62,7 +56,7 @@ export default function UserProfilePage() {
 
   const fetchProfile = async () => {
     try {
-      const profileData = await getProfileData();
+      const profileData = await apiClient.getProfileData();
       setProfile(profileData);
       setFormData({
         firstName: profileData.firstName || "",
@@ -81,7 +75,7 @@ export default function UserProfilePage() {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await apiClient.logout();
       setUser(null);
       navigate("/login");
     } catch (err) {
@@ -110,8 +104,8 @@ export default function UserProfilePage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const updatedProfile = await updateProfile(formData);
-      setProfile(updatedProfile);
+      const updatedProfile = await apiClient.updateProfile(formData);
+      setProfile(updatedProfile as unknown as ProfileData);
       setEditing(false);
       showToast("Profile updated successfully!", "success");
     } catch (err: any) {
@@ -128,8 +122,16 @@ export default function UserProfilePage() {
     if (!file) return;
 
     try {
-      const updatedProfile = await uploadAvatar(file);
-      setProfile(updatedProfile);
+      const updatedProfile = await apiClient.uploadAvatar(file);
+      if (
+        updatedProfile &&
+        typeof updatedProfile === "object" &&
+        "id" in updatedProfile
+      ) {
+        setProfile(updatedProfile as ProfileData);
+      } else {
+        showToast("Invalid profile data received", "error");
+      }
       showToast("Avatar uploaded successfully!", "success");
     } catch (err: any) {
       showToast(err.message || "Failed to upload avatar", "error");
@@ -138,8 +140,8 @@ export default function UserProfilePage() {
 
   const handleDeleteAvatar = async () => {
     try {
-      const updatedProfile = await deleteAvatar();
-      setProfile(updatedProfile);
+      const updatedProfile = await apiClient.deleteAvatar();
+      setProfile(updatedProfile as unknown as ProfileData);
       showToast("Avatar removed successfully!", "success");
     } catch (err: any) {
       showToast("Failed to remove avatar", "error");

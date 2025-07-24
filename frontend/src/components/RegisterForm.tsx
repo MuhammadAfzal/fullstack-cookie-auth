@@ -1,7 +1,7 @@
 // src/components/RegisterForm.tsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { register } from "../services/api";
+import { apiClient } from "../services/api";
 import { showToast } from "../utils/toast";
 import { FiUser, FiLock, FiCheck, FiArrowRight } from "react-icons/fi";
 
@@ -23,7 +23,7 @@ export default function RegisterForm() {
     setError("");
     setLoading(true);
     try {
-      await register(form);
+      await apiClient.register(form);
       showToast("Registered successfully! 🎉", "success");
       navigate("/login");
     } catch (err: any) {

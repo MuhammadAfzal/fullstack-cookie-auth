@@ -5,13 +5,7 @@ import AppLayout from "../layout/AppLayout";
 import DashboardChart from "../components/DashboardChart";
 import DashboardStats from "../components/DashboardStats";
 import EnhancedActivityFeed from "../components/EnhancedActivityFeed";
-import {
-  logout,
-  getDashboardSummary,
-  getDashboardChartData,
-  getDashboardActivity,
-  getDashboardMetrics,
-} from "../services/api";
+import { apiClient } from "../services/api";
 import { FiUsers, FiUserPlus, FiActivity } from "react-icons/fi";
 import { formatDistanceToNow } from "date-fns";
 
@@ -29,10 +23,10 @@ export default function DashboardPage() {
       try {
         const [summaryRes, chartRes, activityRes, metricsRes] =
           await Promise.all([
-            getDashboardSummary(),
-            getDashboardChartData(),
-            getDashboardActivity(),
-            getDashboardMetrics(),
+            apiClient.getDashboardSummary(),
+            apiClient.getDashboardChartData(),
+            apiClient.getDashboardActivity(),
+            apiClient.getDashboardMetrics(),
           ]);
         setSummary(summaryRes);
         setChartData(chartRes);
@@ -49,7 +43,7 @@ export default function DashboardPage() {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await apiClient.logout();
       setUser(null);
       navigate("/login");
     } catch (err) {

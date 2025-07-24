@@ -1,4 +1,4 @@
-import { logout } from "../services/api";
+import { apiClient } from "../services/api";
 import { User } from "../types";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 
 export default function UserInfo({ user, onLogout }: Props) {
   const handleLogout = async () => {
-    await logout();
+    await apiClient.logout();
     onLogout();
   };
 

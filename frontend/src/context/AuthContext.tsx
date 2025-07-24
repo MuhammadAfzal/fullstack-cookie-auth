@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getProfile } from "../services/api";
+import { apiClient } from "../services/api";
 import { User } from "../types";
 
 type AuthContextType = {
@@ -16,7 +16,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Run only on mount
-    getProfile()
+    apiClient
+      .getProfile()
       .then((data) => setUser(data.user as User))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));

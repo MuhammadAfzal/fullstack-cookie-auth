@@ -6,6 +6,7 @@ import AdminDashboardPage from "../pages/AdminDashboardPage";
 import AllUsersPage from "../pages/AllUsersPage";
 import UserProfilePage from "../pages/UserProfilePage";
 import UnauthorizedPage from "../pages/UnauthorizedPage";
+import { ApiGatewayTestPage } from "../pages/ApiGatewayTestPage";
 import ProtectedRoute from "./ProtectedRoute";
 import { useAuth } from "../context/AuthContext";
 import { Role } from "../constants/roles";
@@ -22,6 +23,7 @@ export default function AppRoutes({ onLogin }: Props) {
     <Routes>
       <Route path="/login" element={<LoginPage onLogin={onLogin} />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/test-api" element={<ApiGatewayTestPage />} />
 
       <Route
         path="/dashboard"

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { showToast } from "../utils/toast";
-import { login } from "../services/api";
+import { apiClient } from "../services/api";
 import FullScreenLoader from "./FullScreenLoader";
 import { FiUser, FiLock, FiEye, FiEyeOff, FiArrowRight } from "react-icons/fi";
 
@@ -26,15 +26,23 @@ export default function LoginForm({ onLogin }: Props) {
   };
 
   const handleSubmit = async () => {
+    console.log("🔍 Login form submitted with:", form);
     setLoading(true);
 
     try {
-      await login(form);
+      console.log("🔍 Calling login API...");
+      const result = await apiClient.login(form);
+      console.log("🔍 Login API result:", result);
+
+      console.log("🔍 Calling onLogin...");
       await onLogin(); // ✅ This fetches the user from /me and sets in context
+      console.log("🔍 onLogin completed");
+
       showToast("✅ Login successful!", "success");
       setTransitioning(true);
       setTimeout(() => navigate("/dashboard"), 500);
-    } catch {
+    } catch (error) {
+      console.error("🔍 Login error:", error);
       showToast("❌ Invalid credentials", "error");
     } finally {
       setLoading(false);
@@ -135,6 +143,26 @@ export default function LoginForm({ onLogin }: Props) {
             <FiArrowRight className="w-4 h-4" />
           </div>
         )}
+      </button>
+
+      {/* Test button */}
+      <button
+        type="button"
+        onClick={async () => {
+          console.log("🧪 Testing API connection...");
+          try {
+            const response = await fetch("http://localhost:3000/health");
+            const data = await response.json();
+            console.log("🧪 Health check result:", data);
+            showToast("✅ API Gateway connected!", "success");
+          } catch (error) {
+            console.error("🧪 Health check error:", error);
+            showToast("❌ API Gateway not connected", "error");
+          }
+        }}
+        className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200"
+      >
+        🧪 Test API Connection
       </button>
 
       <div className="text-center">

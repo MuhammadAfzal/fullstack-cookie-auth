@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import RoleGate from "../components/RoleGate";
 import AppLayout from "../layout/AppLayout";
 import { Navigate, useNavigate } from "react-router-dom";
-import { logout } from "../services/api";
+import { apiClient } from "../services/api";
 import { FixedSizeList as List, ListOnScrollProps } from "react-window";
 import {
   FiUser,
@@ -44,10 +44,7 @@ export default function AllUsersPage() {
   const fetchUsers = useCallback(async (pageNum: number) => {
     isFetching.current = true;
     const skip = pageNum * PAGE_SIZE;
-    const res = await fetch(`/api/admin/users?skip=${skip}&take=${PAGE_SIZE}`, {
-      credentials: "include",
-    });
-    const data = await res.json();
+    const data = await apiClient.getAllUsers(skip, PAGE_SIZE);
     if (pageNum === 0) {
       setUsers(data.users);
     } else {
@@ -101,7 +98,7 @@ export default function AllUsersPage() {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await apiClient.logout();
       setUser(null);
       navigate("/login");
     } catch (err) {
