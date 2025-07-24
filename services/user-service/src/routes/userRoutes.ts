@@ -2,7 +2,10 @@ import { Router } from "express";
 import { userController } from "../controllers/userController";
 import { validate } from "../middlewares/validate";
 import { userValidators } from "../validators/userValidators";
-import { authenticateToken } from "../middlewares/authMiddleware";
+import {
+  authenticateToken,
+  authorizeRoles,
+} from "../middlewares/authMiddleware";
 
 const router = Router();
 
@@ -29,6 +32,16 @@ router.put(
   "/:id/preferences",
   validate(userValidators.updatePreferences),
   userController.updateUserPreferences
+);
+
+router.get(
+  "/admin/users",
+  (req, res, next) => {
+    console.log("[User Service] Received /admin/users", req.query);
+    next();
+  },
+  authorizeRoles ? authorizeRoles("ADMIN") : authenticateToken,
+  userController.getAllUsers
 );
 
 export { router as userRoutes };

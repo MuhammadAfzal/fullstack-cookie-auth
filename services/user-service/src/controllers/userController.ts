@@ -322,4 +322,19 @@ export const userController = {
       next(error);
     }
   },
+
+  getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { skip = 0, take = 50 } = req.query;
+      const users = await prisma.user.findMany({
+        skip: Number(skip),
+        take: Number(take),
+        orderBy: { createdAt: "desc" },
+      });
+      const total = await prisma.user.count();
+      res.json({ success: true, users, total });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
