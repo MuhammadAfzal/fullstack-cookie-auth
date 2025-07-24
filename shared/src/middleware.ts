@@ -1,3 +1,5 @@
+// Ensure Express.Request.user is augmented globally
+/// <reference path="./types.ts" />
 import { Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -5,6 +7,8 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { AppError } from "./errors";
 import { createLogger } from "./logger";
+import jwt from "jsonwebtoken";
+import { AuthenticationError } from "./errors";
 
 const logger = createLogger("middleware");
 
@@ -97,3 +101,29 @@ export const healthCheck =
       version: process.env.npm_package_version || "1.0.0",
     });
   };
+
+export function requireAuth(req: Request, res: Response, next: NextFunction) {
+  // Try Authorization header first
+  const authHeader = req.headers["authorization"];
+  let token =
+    authHeader && authHeader.startsWith("Bearer ")
+      ? authHeader.split(" ")[1]
+      : undefined;
+  // Fallback to cookie
+  if (!token && req.cookies) {
+    token = req.cookies.token;
+  }
+  if (!token) return next(new AuthenticationError("Access token required"));
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    req.user = {
+      id: decoded.id,
+      email: decoded.email,
+      username: decoded.username,
+      role: decoded.role,
+    };
+    next();
+  } catch (error) {
+    return next(new AuthenticationError("Invalid or expired token"));
+  }
+}

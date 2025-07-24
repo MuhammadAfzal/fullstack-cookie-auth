@@ -23,6 +23,7 @@ export interface AuthUser {
   id: number;
   username: string;
   role: Role;
+  email?: string;
 }
 
 export interface ApiResponse<T = any> {
@@ -61,3 +62,12 @@ export interface HealthCheck {
     [key: string]: boolean | undefined;
   };
 }
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: import("./types").AuthUser;
+    }
+  }
+}
+export {};
