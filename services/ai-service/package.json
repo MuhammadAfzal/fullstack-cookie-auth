@@ -1,0 +1,22 @@
+{
+  "name": "ai-service",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "dotenv": "^17.2.0",
+    "zod": "^4.0.5",
+    "@shared/common": "file:../../shared",
+    "openai": "^4.57.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "ts-node-dev": "^2.0.0",
+    "@types/express": "^5.0.3"
+  }
+}
