@@ -3,14 +3,19 @@ import { proxyService } from "../services/proxyService";
 
 const router = Router();
 
-// Forward all dashboard requests to User Service
+// Middleware to strip /api prefix from the path
+router.use((req, res, next) => {
+  req.url = req.originalUrl.replace(/^\/api/, "");
+  next();
+});
+
+// Forward all dashboard requests to Dashboard Service
 router.all("*", async (req, res, next) => {
   try {
     const method = req.method;
-    // Forward the full path as-is, but strip /api prefix
-    const path = req.originalUrl.replace(/^\/api/, "");
+    const path = req.url; // Already stripped
     const data = req.body;
-    console.log("yes coming here at api gateway path", path);
+    console.log("API Gateway forwarding to dashboard service path:", path);
 
     // Extract token from cookie if present
     let token;

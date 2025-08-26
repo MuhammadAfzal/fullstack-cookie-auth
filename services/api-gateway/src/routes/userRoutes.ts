@@ -3,12 +3,17 @@ import { proxyService } from "../services/proxyService";
 
 const router = Router();
 
+// Middleware to strip /api/users prefix from the path
+router.use((req, res, next) => {
+  req.url = req.originalUrl.replace(/^\/api\/users/, "");
+  next();
+});
+
 // Forward all user requests to User Service
 router.all("*", async (req, res, next) => {
   try {
     const method = req.method;
-    // Remove the /api/users prefix before forwarding
-    const path = req.originalUrl.replace(/^\/api\/users/, "");
+    const path = req.url; // Already stripped
     const data = req.body;
 
     // Extract token from cookie if present

@@ -3,12 +3,17 @@ import { proxyService } from "../services/proxyService";
 
 const router = Router();
 
+// Middleware to strip /api/auth prefix from the path
+router.use((req, res, next) => {
+  req.url = req.originalUrl.replace(/^\/api\/auth/, "");
+  next();
+});
+
 // Forward all auth requests to Auth Service
 router.all("*", async (req, res, next) => {
   try {
     const method = req.method;
-    // Remove the /api/auth prefix when forwarding to Auth Service
-    const path = req.path.replace(/^\/api\/auth/, "");
+    const path = req.url; // Already stripped
     const data = req.body;
     const headers = {
       ...req.headers,
@@ -34,7 +39,7 @@ router.all("*", async (req, res, next) => {
 
     // Forward the response
     res.status(response.status).json(response.data);
-  } catch (error: any) {
+  } catch (error) {
     next(error);
   }
 });
