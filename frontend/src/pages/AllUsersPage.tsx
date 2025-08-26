@@ -133,14 +133,6 @@ export default function AllUsersPage() {
         tabIndex={0}
         aria-label={`User ${u.username}`}
       >
-        <div className="w-1/12 flex items-center gap-2 px-2 py-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-200 to-purple-200 dark:from-blue-900 dark:to-purple-800 flex items-center justify-center text-lg font-bold text-blue-700 dark:text-blue-200">
-            <FiUser className="w-5 h-5" />
-          </div>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {u.id}
-          </span>
-        </div>
         <div className="w-3/12 px-2 py-3 text-base font-medium text-gray-900 dark:text-gray-100 truncate">
           {u.username}
         </div>
@@ -273,7 +265,6 @@ export default function AllUsersPage() {
 
             <div className="overflow-x-auto rounded-2xl shadow bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
               <div className="sticky top-0 z-10 flex bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 font-semibold text-gray-700 dark:text-gray-200 text-sm border-b border-gray-200 dark:border-gray-700">
-                <div className="w-1/12 px-2 py-3">ID</div>
                 <div className="w-3/12 px-2 py-3">Username</div>
                 <div className="w-3/12 px-2 py-3">Email</div>
                 <div className="w-2/12 px-2 py-3">Role</div>
