@@ -16,7 +16,8 @@
     "prisma:studio": "prisma studio",
     "prisma:reset": "prisma migrate reset",
     "docker:build": "docker build -t user-service .",
-    "docker:run": "docker run -p 3002:3002 user-service"
+    "docker:run": "docker run -p 3002:3002 user-service",
+    "seed:users": "node scripts/seedUsers.js"
   },
   "keywords": [
     "microservice",

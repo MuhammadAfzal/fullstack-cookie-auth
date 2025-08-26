@@ -218,6 +218,16 @@ class ApiClient {
     return this.request("/dashboard/summary");
   }
 
+  // AI endpoints
+  async generateInsights(
+    payload: any
+  ): Promise<{ success: boolean; insights: string[] }> {
+    return this.request("/ai/insights", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
   async getDashboardChartData(): Promise<any> {
     return this.request("/dashboard/chart-data");
   }
@@ -267,6 +277,7 @@ export const {
   getDashboardChartData,
   getDashboardActivity,
   getDashboardMetrics,
+  generateInsights,
   healthCheck,
   getAllUsers,
 } = apiClient;

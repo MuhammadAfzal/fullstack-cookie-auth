@@ -16,6 +16,8 @@ export default function DashboardPage() {
   const [chartData, setChartData] = useState<any>(null);
   const [activity, setActivity] = useState<any[]>([]);
   const [metrics, setMetrics] = useState<any>(null);
+  const [insights, setInsights] = useState<string[] | null>(null);
+  const [insightsLoading, setInsightsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,6 +50,20 @@ export default function DashboardPage() {
       navigate("/login");
     } catch (err) {
       console.error("Logout failed", err);
+    }
+  };
+
+  const handleGenerateInsights = async () => {
+    if (!summary) return;
+    setInsightsLoading(true);
+    try {
+      const res = await apiClient.generateInsights(summary);
+      setInsights(res.insights || []);
+    } catch (e) {
+      console.error("Failed to generate insights", e);
+      setInsights(["Could not generate insights right now."]);
+    } finally {
+      setInsightsLoading(false);
     }
   };
 
@@ -117,6 +133,38 @@ export default function DashboardPage() {
                 <FiActivity className="w-5 h-5" />
                 <span className="font-medium">View Reports</span>
               </button>
+            </div>
+          </div>
+
+          {/* AI Insights */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                AI Insights
+              </h3>
+              <button
+                onClick={handleGenerateInsights}
+                disabled={insightsLoading || !summary}
+                className="px-4 py-2 rounded-md bg-indigo-600 text-white disabled:opacity-60"
+              >
+                {insightsLoading ? "Generating..." : "Generate insights"}
+              </button>
+            </div>
+            <div>
+              {insights?.length ? (
+                <ul className="list-disc pl-6 space-y-2">
+                  {insights.map((i, idx) => (
+                    <li key={idx} className="text-gray-800 dark:text-gray-200">
+                      {i}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">
+                  No insights yet. Click Generate insights to analyze current
+                  metrics.
+                </p>
+              )}
             </div>
           </div>
         </div>
