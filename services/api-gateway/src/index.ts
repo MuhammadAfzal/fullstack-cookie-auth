@@ -15,6 +15,7 @@ import { proxyRoutes } from "./routes/proxyRoutes";
 import { connectRedis } from "./utils/redis";
 import dashboardRoutes from "./routes/dashboardRoutes";
 import adminUserRoutes from "./routes/adminUserRoutes";
+import aiRoutes from "./routes/aiRoutes";
 
 // Load environment variables
 config();
@@ -61,6 +62,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/proxy", proxyRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
