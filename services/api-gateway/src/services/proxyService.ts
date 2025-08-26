@@ -13,6 +13,7 @@ class ProxyService {
   private userService: AxiosInstance;
   private dashboardService: AxiosInstance;
   private config: ServiceConfig;
+  private aiService: AxiosInstance;
 
   constructor() {
     this.config = {
@@ -42,6 +43,14 @@ class ProxyService {
 
     this.dashboardService = axios.create({
       baseURL: process.env["DASHBOARD_SERVICE_URL"] || "http://localhost:3003",
+      timeout: this.config.timeout,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    this.aiService = axios.create({
+      baseURL: process.env["AI_SERVICE_URL"] || "http://localhost:3004",
       timeout: this.config.timeout,
       headers: {
         "Content-Type": "application/json",
@@ -187,6 +196,30 @@ class ProxyService {
     } catch (error: any) {
       logger.error("Dashboard Service forwarding error:", error);
       throw this.handleServiceError(error, "Dashboard Service");
+    }
+  }
+
+  async forwardToAIService(
+    method: string,
+    path: string,
+    data?: any,
+    headers?: any
+  ): Promise<AxiosResponse> {
+    try {
+      const config: AxiosRequestConfig = {
+        method: method.toLowerCase() as any,
+        url: path,
+        data,
+        headers: {
+          ...headers,
+          "X-Forwarded-By": "API-Gateway",
+        },
+      };
+      const response = await this.aiService.request(config);
+      return response;
+    } catch (error: any) {
+      logger.error("AI Service forwarding error:", error);
+      throw this.handleServiceError(error, "AI Service");
     }
   }
 
